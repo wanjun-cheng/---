@@ -1,24 +1,31 @@
-function createStatementData(invoice, plays) {
-  const statementData = {};
-  statementData.customer = invoice.customer;
-  statementData.performances = invoice.performances.map(enrichPerformance);
-  statementData.totalAmount = totalAmount(statementData);
-  statementData.totalVolumeCredits = totalVolumeCredits(statementData);
-  return statementData;
+class CreateStatementData {
+  constructor(invoice, plays) {
+    this.invoice = invoice;
+    this.plays = plays;
+  }
 
-  function enrichPerformance(aPerformance) {
+  init() {
+    const statementData = {};
+    statementData.customer = this.invoice.customer;
+    statementData.performances = this.invoice.performances.map(this.enrichPerformance);
+    statementData.totalAmount = this.totalAmount(statementData);
+    statementData.totalVolumeCredits = this.totalVolumeCredits(statementData);
+    return statementData;
+  }
+
+  enrichPerformance = (aPerformance) => {
     const result = Object.assign({}, aPerformance);
-    result.play = playFor(result);
-    result.amount = amountFor(result);
-    result.volumeCredits = volumeCreditsFor(result);
+    result.play = this.playFor(result);
+    result.amount = this.amountFor(result);
+    result.volumeCredits = this.volumeCreditsFor(result);
     return result;
   }
 
-  function playFor(aPerformance) {
-    return plays[aPerformance.playID];
+  playFor = (aPerformance) => {
+    return this.plays[aPerformance.playID];
   }
 
-  function amountFor(aPerformance) {
+  amountFor(aPerformance) {
     let result = 0;
     switch (aPerformance.play.type) {
       case "tragedy":
@@ -40,7 +47,7 @@ function createStatementData(invoice, plays) {
     return result;
   }
 
-  function volumeCreditsFor(aPerformance) {
+  volumeCreditsFor(aPerformance) {
     let volumeCredits = 0;
     volumeCredits += Math.max(aPerformance.audience - 30, 0);
     if ("comedy" === aPerformance.play.type) {
@@ -49,7 +56,7 @@ function createStatementData(invoice, plays) {
     return volumeCredits;
   }
 
-  function totalVolumeCredits(data) {
+  totalVolumeCredits(data) {
     let volumeCredits = 0;
     for (let perf of data.performances) {
       volumeCredits += perf.volumeCredits;
@@ -57,16 +64,13 @@ function createStatementData(invoice, plays) {
     return volumeCredits;
   }
 
-  function totalAmount(data) {
+  totalAmount(data) {
     let totalAmount = 0;
     for (let perf of data.performances) {
       totalAmount += perf.amount;
     }
     return totalAmount;
   }
-
 }
 
-module.exports = {
-  createStatementData,
-}
+module.exports = CreateStatementData;

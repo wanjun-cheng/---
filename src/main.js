@@ -1,3 +1,6 @@
+// import {CreateStatementData} from "./common/createStatementData";
+// console.log(CreateStatementData);
+
 const p1 = new Promise((resolve, reject) => {
   $.getJSON('./src/config/plays.json', function (data) {
     resolve(data);
@@ -25,7 +28,7 @@ Promise.all([p1, p2]).then((result) => {
 
 
 function htmlStatement(invoice, plays) {
-  return renderHtml(createStatementData(invoice, plays));
+  return renderHtml(CreateStatementData1(invoice, plays));
 }
 
 function renderHtml(data) {
@@ -46,7 +49,7 @@ function usd(aNumber) {
 
 
 // 需提到独立文件
-function createStatementData(invoice, plays) {
+const CreateStatementData1 = (invoice, plays) => {
   const statementData = {};
   statementData.customer = invoice.customer;
   statementData.performances = invoice.performances.map(enrichPerformance);
